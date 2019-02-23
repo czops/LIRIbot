@@ -1,10 +1,14 @@
 require("dotenv").config();
 
+//this is allowing you to access the keys.js file
 var keys = require("./keys.js");
+
 var axios = require("axios");
 
 
 var spotify = new Spotify(keys.spotify);
+
+
 
 //liri should be able to accept the following commands:
 //concert-this
@@ -14,22 +18,13 @@ var spotify = new Spotify(keys.spotify);
 
 //input will take in the right function
 var input = process.argv[2];
-
+//input2 will be some search term for the various API calls
 var input2 = process.argv[3];
+//don't know what input3 is for... but we'll keep it around for now.
+//the difficulty here is keeping the application working for strings..
+//no way to separate out this next input
 var input3 = process.argv[4];
 
-
-//process what the input to node is and try to interpret and run the correct function
-if (input == concertThis) {
-    //make sure the parameters being entered are correct
-    concertThis();
-} else if (input == spotifyThisSong) {
-    spotifyThisSong();
-} else if (input == movieThis) {
-    movieThis();
-} else if (input == doWhatItSays) {
-    doWhatItSays();
-}
 
 var errorFunction = function (error) {
     if (error.response) {
@@ -53,81 +48,100 @@ var errorFunction = function (error) {
 //this should search the Bands in Town Artist Events
 var concertThis = function () {
 
-    var artist = input;
+
     var appID = 'dont have this yet';
     var appKey = 'dont have this yet';
 
     //https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp
+    //some special characters cannot be searched for... make this a stretch goal.
+    queryURL = 'https://rest.bandsintown.com/artists/' + input2 + '/events?app_id=codingbootcamp';
 
-    queryURL = 'https://rest.bandsintown.com/artists/' + artist + '/events?app_id=codingbootcamp';
+
+    axios.get(queryURL).then(function (response) {
 
 
-    axios.get('/user?ID=12345')
-        .then(function (response) {
-            console.log(response);
-        })
-        .catch(errorFunction());
+        //get information about the venue
+        var showData = [
+            //this needs to be converted using moment....
+            "Date of the Event: " + response.datetime,
+            "Venue name: " + response.venue.name,
+            "Venue city: " + response.venue.city,
+            "Venue country: " + response.venue.country
+        ].join("\n\n");;
 
-    //the ajax call doesnt need to get used here
+        console.log(response);
+        console.log(showData);
 
-    // $.ajax({
-    //     url: queryURL,
-    //     method: 'GET',
-    // }).then(function (answer) {
-    //     //Name of Dish
-    //     foodName = answer.hits[randomRecipe].recipe.label;
-    //     $('.recipe-name').text(foodName);
-    //     //Image path
-    //     foodImage = answer.hits[randomRecipe].recipe.image;
-    //     $('.food-image').attr('src', foodImage);
-    //     //Calories. May not end up using
-    //     foodCalories = answer.hits[randomRecipe].recipe.calories;
-    //     $('.recipe-calories').html('Calories: ');
-    //     $('.recipe-calorie-count').html(foodCalories.toFixed(0) + '<br><br>');
-    //     $('.recipe-ingredients').html('Ingredients:<br>');
-    //     //Ingredients. It is an array of strings
-    //     foodIngredients = answer.hits[randomRecipe].recipe.ingredientLines;
-    //     console.log(foodIngredients);
-    //     $('.last-moment').css('overflow', 'auto');
-    //     $('.caard-body').css('overflow', 'auto');
-    //     for (i = 0; i < foodIngredients.length; i++) {
-    //         $('.recipe-text').append(foodIngredients[i] + '<br>');
-    //     };
-    //     //Link to full recipe website with prep instructions
-    //     foodPrepSite = answer.hits[randomRecipe].recipe.url;
-    //     $('.recipe-link').attr('href', foodPrepSite);
-    //     $('.recipe-link').attr('target', 'blank');
-    //     $('.recipe-link').text(foodPrepSite);
-    // });
+    });
 };
+
+
+
+var Spotify = require('node-spotify-api');
 
 var spotifyThisSong = function () {
 
-    var artist = input;
-    var appID = 'dont have this yet';
-    var appKey = 'dont have this yet';
 
-    queryURL = 'https://rest.bandsintown.com/artists/' + artist + '/events?app_id=codingbootcamp';
+    //how the hell is this supposed to work?
 
-    axios.get('/user?ID=12345')
-        .then(function (response) {
-            console.log(response);
-        })
+    var spotify = new Spotify({
+        //is this supposed to be in here?
+        id: "id",
+        secret: "secret"
+    });
+
+    spotify.search({ type: 'track', query: input2 }, function (err, data) {
+        if (err) {
+            return console.log('Error occurred: ' + err);
+        }
+
+        console.log(data);
+    });
+
+    axios.get(queryURL).then(function (response) {
+
+
+        console.log(response);
+    })
         .catch(errorFunction());
 
     //     function (error) {
     //     console.log(error);
-    // });
 
-}
+};
+
+
+var omdbApi = require('omdb-client');
 
 var movieThis = function () {
+   
+    var appKey = '204334cd';
 
-    axios.get('/user?ID=12345')
-        .then(function (response) {
-            console.log(response);
-        })
-        .catch(errorFunction());
+ 
+    var params = {
+        apiKey: 'XXXXXXX',
+        title: 'Terminator',
+        year: 2012
+    }
+    omdbApi.get(params, function(err, data) {
+        // process response...
+    });
+
+
+    axios.get(queryURL).then(function (response) {
+
+
+        //get information about the venue
+        var showData = [
+            //this needs to be converted using moment....
+            "Date of the Event: " + response.datetime,
+            "Venue name: " + response.venue.name,
+            "Venue city: " + response.venue.city,
+            "Venue country: " + response.venue.country
+        ].join("\n\n");;
+
+        console.log(response);
+        console.log(showData);
 
 }
 
@@ -139,4 +153,18 @@ var doWhatItSays = function () {
         })
         .catch(errorFunction());
 
+}
+
+
+
+//process what the input to node is and try to interpret and run the correct function
+if (input == "concert") {
+    //make sure the parameters being entered are correct
+    concertThis();
+} else if (input == "song") {
+    spotifyThisSong();
+} else if (input == "movie") {
+    movieThis();
+} else if (input == "doWhatItSays") {
+    doWhatItSays();
 }
