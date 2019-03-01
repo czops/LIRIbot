@@ -6,8 +6,6 @@ var keys = require("./keys.js");
 var axios = require("axios");
 
 
-var spotify = new Spotify(keys.spotify);
-
 
 
 //liri should be able to accept the following commands:
@@ -49,61 +47,65 @@ var errorFunction = function (error) {
 var concertThis = function () {
 
 
-    var appID = 'dont have this yet';
-    var appKey = 'dont have this yet';
+    // var appID = 'dont have this yet';
+    // var appKey = 'dont have this yet';
 
     //https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp
     //some special characters cannot be searched for... make this a stretch goal.
-    queryURL = 'https://rest.bandsintown.com/artists/' + input2 + '/events?app_id=codingbootcamp';
 
+    queryURL = 'https://rest.bandsintown.com/artists/' + input2 + '/events?app_id=codingbootcamp';
+    //can add a function here to chain the inputs in case the artist has multiple words in the name
 
     axios.get(queryURL).then(function (response) {
-
-
+        //console.log(response);
         //get information about the venue
         var showData = [
             //this needs to be converted using moment....
-            "Date of the Event: " + response.datetime,
-            "Venue name: " + response.venue.name,
-            "Venue city: " + response.venue.city,
-            "Venue country: " + response.venue.country
-        ].join("\n\n");;
+            "Date of the Event: " + response.data[0].datetime,
+            "Venue name: " + response.data[0].venue.name,
+            "Venue city: " + response.data[0].venue.city,
+            "Venue country: " + response.data[0].venue.country
+        ].join("\n\n");
 
-        console.log(response);
+
         console.log(showData);
 
     });
 };
 
 
-
+// you are creating a "class" variable using the package you are requiring
 var Spotify = require('node-spotify-api');
+
+
+var spotify = new Spotify(keys.spotify);
 
 var spotifyThisSong = function () {
 
-
-    //how the hell is this supposed to work?
-
-    var spotify = new Spotify({
-        //is this supposed to be in here?
-        id: "id",
-        secret: "secret"
-    });
 
     spotify.search({ type: 'track', query: input2 }, function (err, data) {
         if (err) {
             return console.log('Error occurred: ' + err);
         }
+        //JSON.stringify();
+        // console.log(data.tracks.items[0].artists);
 
-        console.log(data);
+        var showData = [
+            "Artist(s) or Band: " + data.tracks.items[0].artists[0].name,
+            "Song name: " + data.tracks.items[0].name,
+            "Link to a sample: " + data.tracks.items[0].preview_url,
+            "Album: " + data.tracks.items[0].album.name
+        ].join("\n\n");
+
+        console.log(showData);
+
     });
 
-    axios.get(queryURL).then(function (response) {
+    // axios.get(queryURL).then(function (response) {
 
-
-        console.log(response);
-    })
-        .catch(errorFunction());
+    //     console.log(response);
+    // })
+    //     .catch(errorFunction());
 
     //     function (error) {
     //     console.log(error);
@@ -114,36 +116,38 @@ var spotifyThisSong = function () {
 var omdbApi = require('omdb-client');
 
 var movieThis = function () {
-   
-    var appKey = '204334cd';
 
- 
     var params = {
-        apiKey: 'XXXXXXX',
-        title: 'Terminator',
-        year: 2012
+        apiKey: '204334cd',
+        title: input2,
+        //this is hardcoded - but it could be better off running as another input
+        // year: input3
     }
-    omdbApi.get(params, function(err, data) {
-        // process response...
+
+    omdbApi.get(params, function (err, data) {
+        if (err) {
+            return console.log('Error occurred: ' + err);
+        }
+        
+        var showData = [
+            "Title of the movie: " + data.Title,
+            "Year the movie came out: " + data.Year,
+            "IMDB Rating of the movie: " + data.Rated,
+            "Rotten Tomatoes Rating of the movie: " + data.Ratings[1].Value,
+            "Country where the movie was produced: " + data.Country,
+            "Language of the movie: " + data.Language,
+            "Plot of the movie: " + data.Plot,
+            "Actors in the movie: " + data.Actors
+        ].join("\n\n");
+
+        console.log(showData);
     });
 
 
-    axios.get(queryURL).then(function (response) {
+    // axios.get(queryURL).then(function (response) {
 
-
-        //get information about the venue
-        var showData = [
-            //this needs to be converted using moment....
-            "Date of the Event: " + response.datetime,
-            "Venue name: " + response.venue.name,
-            "Venue city: " + response.venue.city,
-            "Venue country: " + response.venue.country
-        ].join("\n\n");;
-
-        console.log(response);
-        console.log(showData);
-
-}
+    // });
+};
 
 var doWhatItSays = function () {
 

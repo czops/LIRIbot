@@ -1,4 +1,4 @@
-console.log('this is loaded');
+// console.log('Keys loaded');
 
 //this is then linked to the .env(?) file where youre keys are actually stored? I think?
 exports.spotify = {
