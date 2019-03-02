@@ -43,7 +43,7 @@ var errorFunction = function (error) {
 }
 
 
-//this should search the Bands in Town Artist Events
+//this should search the Bands in Town Artist Events call using "concert"
 var concertThis = function (band) {
 
 
@@ -80,10 +80,10 @@ var Spotify = require('node-spotify-api');
 
 var spotify = new Spotify(keys.spotify);
 
-var spotifyThisSong = function () {
+var spotifyThisSong = function (song) {
 
 
-    spotify.search({ type: 'track', query: input2 }, function (err, data) {
+    spotify.search({ type: 'track', query: song }, function (err, data) {
         if (err) {
             return console.log('Error occurred: ' + err);
         }
@@ -115,11 +115,11 @@ var spotifyThisSong = function () {
 
 var omdbApi = require('omdb-client');
 
-var movieThis = function () {
+var movieThis = function (movie) {
 
     var params = {
         apiKey: '204334cd',
-        title: input2,
+        title: movie,
         //this is hardcoded - but it could be better off running as another input
         // year: input3
     }
@@ -171,30 +171,32 @@ var doWhatItSays = function () {
             return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
         }
 
-        //console.log(randomNumber);
-        var randomNumber = getRandomIntInclusive(1, 6);
+     
+        var randomNumber = parseInt(getRandomIntInclusive(1, 3));
+        console.log(randomNumber);
 
-        if (randomNumber = 1 || 2) {
+        
+        if (randomNumber === 1) {
             var input = dataArr[0];
             var input2 = dataArr[1].substring(1, dataArr[1].length - 1);
-            // console.log('1st option');
-            // console.log(input);
-            // console.log(input2);
+            console.log('1st option');
+            console.log(input);
+            console.log(input2);
             concertThis(input2);
-        } else if (randomNumber = 3 || 4) {
+        } else if (randomNumber === 2) {
             var input = dataArr[2];
             var input2 = dataArr[3].substring(1, dataArr[3].length - 1);
             console.log('2nd option');
             console.log(input);
             console.log(input2);
-            movieThis();
-        } else if (randomNumber = 5 || 6) {
+            movieThis(input2);
+        } else if (randomNumber === 3) {
             var input = dataArr[4];
             var input2 = dataArr[5].substring(1, dataArr[5].length - 1);
             console.log('3rd option');
             console.log(input);
             console.log(input2);
-            spotifyThisSong();
+            spotifyThisSong(input2);
         };
 
         // if (input == "concert") {
@@ -218,9 +220,9 @@ var doWhatItSays = function () {
 if (input == "concert") {
     concertThis(input2);
 } else if (input == "song") {
-    spotifyThisSong();
+    spotifyThisSong(input2);
 } else if (input == "movie") {
-    movieThis();
+    movieThis(input2);
 } else if (input == "doWhatItSays") {
     doWhatItSays();
 }
