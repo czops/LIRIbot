@@ -5,7 +5,7 @@ var keys = require("./keys.js");
 
 var axios = require("axios");
 
-
+var fs = require("fs");
 
 
 //liri should be able to accept the following commands:
@@ -44,7 +44,7 @@ var errorFunction = function (error) {
 
 
 //this should search the Bands in Town Artist Events
-var concertThis = function () {
+var concertThis = function (band) {
 
 
     // var appID = 'dont have this yet';
@@ -53,7 +53,7 @@ var concertThis = function () {
     //https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp
     //some special characters cannot be searched for... make this a stretch goal.
 
-    queryURL = 'https://rest.bandsintown.com/artists/' + input2 + '/events?app_id=codingbootcamp';
+    queryURL = 'https://rest.bandsintown.com/artists/' + band + '/events?app_id=codingbootcamp';
     //can add a function here to chain the inputs in case the artist has multiple words in the name
 
     axios.get(queryURL).then(function (response) {
@@ -128,7 +128,7 @@ var movieThis = function () {
         if (err) {
             return console.log('Error occurred: ' + err);
         }
-        
+
         var showData = [
             "Title of the movie: " + data.Title,
             "Year the movie came out: " + data.Year,
@@ -151,20 +151,72 @@ var movieThis = function () {
 
 var doWhatItSays = function () {
 
-    axios.get('/user?ID=12345')
-        .then(function (response) {
-            console.log(response);
-        })
-        .catch(errorFunction());
+    fs.readFile("random.txt", "utf8", function (error, data) {
+
+        // If the code experiences any errors it will log the error to the console.
+        if (error) {
+            return console.log(error);
+        };
+
+        // We will then print the contents of data
+        //console.log(data);
+
+        // Then split it by commas (to make it more readable)
+        var dataArr = data.split(",");
+        //console.log(dataArr);
+
+        function getRandomIntInclusive(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
+        }
+
+        //console.log(randomNumber);
+        var randomNumber = getRandomIntInclusive(1, 6);
+
+        if (randomNumber = 1 || 2) {
+            var input = dataArr[0];
+            var input2 = dataArr[1].substring(1, dataArr[1].length - 1);
+            // console.log('1st option');
+            // console.log(input);
+            // console.log(input2);
+            concertThis(input2);
+        } else if (randomNumber = 3 || 4) {
+            var input = dataArr[2];
+            var input2 = dataArr[3].substring(1, dataArr[3].length - 1);
+            console.log('2nd option');
+            console.log(input);
+            console.log(input2);
+            movieThis();
+        } else if (randomNumber = 5 || 6) {
+            var input = dataArr[4];
+            var input2 = dataArr[5].substring(1, dataArr[5].length - 1);
+            console.log('3rd option');
+            console.log(input);
+            console.log(input2);
+            spotifyThisSong();
+        };
+
+        // if (input == "concert") {
+        //     concertThis();
+        // } else if (input == "song") {
+        //     spotifyThisSong();
+        // } else if (input == "movie") {
+        //     movieThis();
+        // } else if (input == "doWhatItSays") {
+        //     doWhatItSays();
+        // };
+
+        // console.log(dataArr);
+
+
+    });
 
 }
 
-
-
 //process what the input to node is and try to interpret and run the correct function
 if (input == "concert") {
-    //make sure the parameters being entered are correct
-    concertThis();
+    concertThis(input2);
 } else if (input == "song") {
     spotifyThisSong();
 } else if (input == "movie") {
